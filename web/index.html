@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>开发设计规范手册</title>
+<link rel="stylesheet" href="/app.css" />
+</head>
+<body>
+<header class="topbar">
+  <h1>开发设计规范手册</h1>
+  <div class="themes">
+    <label>主题 A <select id="themeA"></select></label>
+    <label>主题 B <select id="themeB"></select></label>
+    <button id="btnReport">生成检查报告</button>
+    <span id="cacheHint" class="hint"></span>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button data-tab="compare" class="active">主题与令牌比较</button>
+  <button data-tab="components">组件 × 状态</button>
+  <button data-tab="resolve">令牌解析解释</button>
+  <button data-tab="report">检查报告</button>
+  <button data-tab="shots">截图与确认</button>
+  <button data-tab="versions">版本</button>
+</nav>
+
+<main>
+  <!-- 比较 -->
+  <section id="tab-compare" class="tab active">
+    <div class="toolbar">
+      <input id="filter" placeholder="过滤令牌名，如 color.action / font.size / icon" />
+      <select id="typeFilter">
+        <option value="">全部类型</option>
+      </select>
+      <span class="hint">颜色块点击可交换对比；🔗 表示别名，悬停查看解析链与覆盖优先级</span>
+    </div>
+    <table class="grid">
+      <thead><tr><th>令牌</th><th>类型</th><th>主题 A</th><th>主题 B</th><th>差异</th></tr></thead>
+      <tbody id="compareBody"></tbody>
+    </table>
+  </section>
+
+  <!-- 组件状态 -->
+  <section id="tab-components" class="tab">
+    <div id="componentList" class="cards"></div>
+  </section>
+
+  <!-- 解析解释 -->
+  <section id="tab-resolve" class="tab">
+    <div class="toolbar">
+      <input id="resolveName" placeholder="令牌名，如 color.action.bg" value="color.action.bg" />
+      <select id="resolveScope"></select>
+      <button id="btnResolve">解析</button>
+    </div>
+    <pre id="resolveOut" class="code"></pre>
+  </section>
+
+  <!-- 报告 -->
+  <section id="tab-report" class="tab">
+    <div id="reportSummary"></div>
+    <div id="reportFindings"></div>
+  </section>
+
+  <!-- 截图 -->
+  <section id="tab-shots" class="tab">
+    <div class="toolbar">
+      <select id="shotComponent"></select>
+      <select id="shotTheme"></select>
+      <button id="btnShot">截图</button>
+      <button id="btnShotFail" title="模拟第 3 帧失败">模拟失败</button>
+    </div>
+    <div id="shots" class="cards"></div>
+    <h3>设计师确认</h3>
+    <div id="confirmations" class="cards"></div>
+  </section>
+
+  <!-- 版本 -->
+  <section id="tab-versions" class="tab">
+    <div class="toolbar">
+      <input id="versionLabel" placeholder="版本标签" />
+      <button id="btnVersion">固化当前为新版本</button>
+    </div>
+    <div id="versions" class="cards"></div>
+  </section>
+</main>
+
+<div id="modal" class="modal hidden">
+  <div class="modal-box">
+    <button id="modalClose" class="float">×</button>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<script src="/app.js"></script>
+</body>
+</html>
