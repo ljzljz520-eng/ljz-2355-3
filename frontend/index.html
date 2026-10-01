@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>开发设计规范手册 · Design Tokens</title>
+<link rel="stylesheet" href="/static/styles.css"/>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <div class="logo">◆</div>
+    <div>
+      <h1>开发设计规范手册</h1>
+      <p>品牌 · 主题继承 · 令牌解析 · 组件状态可读性 · 检查报告</p>
+    </div>
+  </div>
+  <div class="top-actions">
+    <select id="themeSelect" title="切换主题"></select>
+    <button id="runReportBtn" class="primary">生成检查报告</button>
+  </div>
+</header>
+
+<nav class="tabs" id="tabs">
+  <button data-tab="tokens" class="active">令牌浏览器</button>
+  <button data-tab="colors">颜色对比</button>
+  <button data-tab="typography">字号字重</button>
+  <button data-tab="components">图标 / 组件状态</button>
+  <button data-tab="screenshots">截图与确认</button>
+  <button data-tab="report">检查报告</button>
+</nav>
+
+<main>
+  <!-- ============ TOKENS ============ -->
+  <section data-panel="tokens" class="panel active">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-head">
+          <h2>主题继承图</h2>
+          <span class="hint">请求时沿继承图解析；子主题覆盖父主题</span>
+        </div>
+        <div id="inheritanceGraph" class="graph"></div>
+        <div class="cache-bar">
+          <div><b>缓存状态</b> <span id="cacheState" class="mono"></span></div>
+          <button id="invalidateBtn" class="ghost small">失效全部缓存</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <h2 id="tokenTitle">令牌（静态展开）</h2>
+          <div class="row">
+            <label class="check"><input type="checkbox" id="showCyclesOnly"/> 仅看环上令牌</label>
+            <input id="tokenSearch" placeholder="按路径搜索，如 color.text" class="small-input"/>
+          </div>
+        </div>
+        <div id="tokenList" class="token-list"></div>
+      </div>
+    </div>
+    <div class="card" id="tokenDetailCard" hidden>
+      <div class="card-head"><h2>解析解释 / 覆盖优先级</h2><button class="ghost small" id="closeTokenDetail">关闭</button></div>
+      <div id="tokenDetail"></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h2>上游令牌更新（触发缓存失效 · 变更影响 · 确认待复查）</h2></div>
+      <div class="row wrap">
+        <select id="updTheme" class="small-input"></select>
+        <input id="updPath" class="small-input grow" value="color.palette.blue.600"/>
+        <input id="updValue" class="small-input" value="#153e90"/>
+        <input id="updDesigner" class="small-input" value="mina"/>
+        <button id="updBtn" class="primary">更新上游令牌</button>
+      </div>
+      <pre id="updResult" class="result"></pre>
+    </div>
+  </section>
+
+  <!-- ============ COLORS ============ -->
+  <section data-panel="colors" class="panel">
+    <div class="card">
+      <div class="card-head"><h2>交互比较颜色组合（绑定实际使用状态）</h2>
+        <span class="hint">颜色值合法 ≠ 文本/背景组合可读；比例按真实前景×背景计算</span></div>
+      <div id="compareRows"></div>
+      <div class="row wrap">
+        <button id="addPair" class="ghost">+ 增加对比组合</button>
+        <select id="cmpScale" class="small-input">
+          <option value="normal">普通文本（≥4.5:1）</option>
+          <option value="large">大号/粗体文本（≥3:1）</option>
+          <option value="ui">UI 图形/图标（≥3:1）</option>
+        </select>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h2>组件真实状态对比矩阵</h2><span class="hint">禁用态标注“豁免，不计入合格演示”</span></div>
+      <div id="contrastMatrix"></div>
+    </div>
+  </section>
+
+  <!-- ============ TYPOGRAPHY ============ -->
+  <section data-panel="typography" class="panel">
+    <div class="card">
+      <div class="card-head"><h2>字号 / 字重令牌</h2><span class="hint">以实际解析值渲染，标注令牌路径与来源主题</span></div>
+      <div id="typeScale"></div>
+    </div>
+  </section>
+
+  <!-- ============ COMPONENTS / ICONS ============ -->
+  <section data-panel="components" class="panel">
+    <div class="card">
+      <div class="card-head"><h2>组件与表单状态 · 运行示例（与说明一致）</h2></div>
+      <div id="componentList"></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h2>组件依赖图（PostgreSQL 持久化）</h2></div>
+      <div id="depGraph" class="graph"></div>
+    </div>
+  </section>
+
+  <!-- ============ SCREENSHOTS ============ -->
+  <section data-panel="screenshots" class="panel">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-head"><h2>截图任务（中断可恢复）</h2></div>
+        <div id="shotTasks"></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h2>设计师确认（绑定截图 + 令牌版）</h2></div>
+        <div id="confirmations"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h2>导出带标注的设计图（可追溯来源）</h2></div>
+      <div class="row wrap">
+        <select id="exComp" class="small-input"></select>
+        <select id="exTheme" class="small-input"></select>
+        <select id="exState" class="small-input"></select>
+        <button id="exportBtn" class="primary">导出标注 SVG</button>
+      </div>
+      <div id="exportResult" class="export-grid"></div>
+    </div>
+  </section>
+
+  <!-- ============ REPORT ============ -->
+  <section data-panel="report" class="panel">
+    <div class="card">
+      <div class="card-head"><h2>后台检查报告</h2>
+        <span id="reportMeta" class="hint"></span></div>
+      <div id="reportSummary" class="summary"></div>
+      <div id="reportFindings"></div>
+    </div>
+  </section>
+</main>
+
+<div id="toast"></div>
+<script src="/static/app.js"></script>
+</body>
+</html>
